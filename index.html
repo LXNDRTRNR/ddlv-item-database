@@ -278,8 +278,12 @@ input:checked + .slider:before{
   color: #000000 !important;
 }
 
-/* Blue background - black text (both modes) */
-.data-table td.bg-blue {
+/* Blue background - black text in dark mode, black text in light mode */
+body:not(.light) .data-table td.bg-blue {
+  color: #000000 !important;
+}
+
+body.light .data-table td.bg-blue {
   color: #000000 !important;
 }
 
