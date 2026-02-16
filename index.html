@@ -71,7 +71,7 @@ body{
 
 .data-table{
   width:100%;
-  table-layout:fixed; /* forces equal auto-fit columns */
+  table-layout:fixed;
   border-collapse:collapse;
 }
 
@@ -94,6 +94,21 @@ body{
   border-right:none;
 }
 
+/* Red background - white text (both modes) */
+.data-table td.bg-red {
+  color: #ffffff !important;
+}
+
+/* Yellow background - black text (both modes) */
+.data-table td.bg-yellow {
+  color: #000000 !important;
+}
+
+/* Blue background - black text (both modes) */
+.data-table td.bg-blue {
+  color: #000000 !important;
+}
+
 .copy-btn{
   font-size:.7rem;
   padding:3px 8px;
@@ -109,6 +124,14 @@ body{
   background:var(--surface);
   color:var(--text);
   border:1px solid var(--border);
+}
+
+.btn-close{
+  filter:invert(1);
+}
+
+body.light .btn-close{
+  filter:invert(0);
 }
 </style>
 </head>
@@ -162,7 +185,12 @@ body{
 </div>
 <div class="modal-body">
 <p style="color:red;font-weight:bold;">
-INSERTING ITEMS THAT ARE UNRELEASED HAS THE POTENTIAL TO BREAK YOUR GAME.
+INSERTING ITEMS THAT ARE UNRELEASED HAS THE POTENTIAL TO BREAK YOUR GAME, AS WAS FOUND WITH ITEMS PEOPLE ADDED BEING REMOVED CAUSING THEIR SAVE GAMES TO BECOME CORRUPT. YOU ADD THESE ITEMS AT YOUR OWN RISK AND I AM NOT AT FAULT. ALWAYS BACK UP YOUR SAVE. - RubyElf
+</p>
+<p>
+Highlighted <span style="background-color:#ffff00; color:#000000; font-weight:bold; padding:0 3px;">YELLOW</span> means I am not sure if it's safe or you should not craft early/have more than 1.<br><br>
+Highlighted <span style="background-color:#0d6efd; color:#000000; padding:0 3px;">BLUE</span> means you can get it as a quest reward and could break your save if you get it early<br><br>
+IF IT'S HIGHLIGHTED IN RED DON'T USE IT!
 </p>
 </div>
 </div>
@@ -202,17 +230,38 @@ theadRow.appendChild(th);
 });
 }
 
-function isDarkColor(hex){
-if(!hex) return false;
-hex=hex.replace('#','');
-if(hex.length===3){
-hex=hex.split('').map(x=>x+x).join('');
+function normalizeHex(hex){
+if(!hex) return '';
+hex=hex.toUpperCase().replace(/\s/g,'');
+if(hex.length===4 && hex[0]==='#'){
+hex='#'+hex[1]+hex[1]+hex[2]+hex[2]+hex[3]+hex[3];
 }
-const r=parseInt(hex.substr(0,2),16);
-const g=parseInt(hex.substr(2,2),16);
-const b=parseInt(hex.substr(4,2),16);
-const brightness=(r*299+g*587+b*114)/1000;
-return brightness<128;
+return hex;
+}
+
+function getColorClass(bgColor){
+if(!bgColor) return '';
+
+const hex=normalizeHex(bgColor);
+
+// Red variants
+if(hex==='#FF0000' || hex==='#DC3545' || hex==='#F00000' || 
+   hex==='#FF0001' || hex==='#FE0000'){
+return 'bg-red';
+}
+
+// Yellow variants
+if(hex==='#FFFF00' || hex==='#FFFF01' || hex==='#FEFE00'){
+return 'bg-yellow';
+}
+
+// Blue variants
+if(hex==='#0000FF' || hex==='#0D6EFD' || hex==='#0000FE' || 
+   hex==='#0001FF' || hex==='#0D6DFD'){
+return 'bg-blue';
+}
+
+return '';
 }
 
 function renderTable(){
@@ -235,11 +284,15 @@ const bg=cell?.background??'';
 
 td.textContent=value;
 
-if(bg && bg!=='#ffffff'){
-td.style.backgroundColor=bg;
-if(isDarkColor(bg)){
-td.style.color='#ffffff';
+// Apply color class based on background
+const colorClass=getColorClass(bg);
+if(colorClass){
+td.className=colorClass;
 }
+
+// Apply background color
+if(bg && bg!=='#ffffff' && bg!=='#000000'){
+td.style.backgroundColor=bg;
 }
 
 if(colIndex===0){
