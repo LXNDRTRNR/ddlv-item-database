@@ -269,23 +269,21 @@ input:checked + .slider:before{
 }
 
 /* Red background - white text (both modes) */
-.data-table td.bg-red {
+.data-table td.bg-red,
+.data-table td.bg-red * {
   color: #ffffff !important;
 }
 
-/* Yellow background - black text (both modes) */
-.data-table td.bg-yellow {
+.data-table td.bg-yellow,
+.data-table td.bg-yellow * {
   color: #000000 !important;
 }
 
-/* Blue background - black text in dark mode, black text in light mode */
-body:not(.light) .data-table td.bg-blue {
+.data-table td.bg-blue,
+.data-table td.bg-blue * {
   color: #000000 !important;
 }
 
-body.light .data-table td.bg-blue {
-  color: #000000 !important;
-}
 
 .copy-btn{
   font-size:.7rem;
