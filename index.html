@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Table</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --border: #333;
+      --text: #ffffff;
+      --muted: #aaaaaa;
+      --accent: #0d6efd;
+    }
+
+    body.light {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --border: #dddddd;
+      --text: #111111;
+      --muted: #666666;
+      --accent: #0d6efd;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .top-block {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg);
+      padding: 20px 0 10px 0;
+    }
+
+    .top-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .search-input {
+      background-color: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .table-wrapper {
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-top: 15px;
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+    }
+
+    .data-table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table thead {
+      position: sticky;
+      top: 0;
+      background-color: var(--border);
+      z-index: 100;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .data-table th:last-child,
+    .data-table td:last-child {
+      border-right: none;
+    }
+
+    .copy-btn {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      margin-left: 10px;
+      border-radius: 8px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      height: 28px;
+      cursor: pointer;
+    }
+
+    .modal-content {
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    body.light .btn-close {
+      filter: invert(0);
+    }
+  </style>
+</head>
+
+<body>
+<div class="container-fluid">
+
+  <div class="top-block">
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+        <div class="top-inner">
+
+          <label class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="themeToggle">
+          </label>
+
+          <input type="text" id="searchInput" class="form-control search-input" placeholder="Search" autocomplete="off">
+
+          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#importantModal">
+            <i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT
+          </button>
+
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-2"></div>
+    <div class="col-8">
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr id="tableHead"></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-2"></div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="importantModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">IMPORTANT</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:red; font-weight:bold;">
+          INSERTING ITEMS THAT ARE UNRELEASED HAS THE POTENTIAL TO BREAK YOUR GAME.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  let rawData = [];
+  let headers = [];
+  let searchTimeout = null;
+
+  const tbody = document.getElementById('tableBody');
+  const theadRow = document.getElementById('tableHead');
+  const searchInput = document.getElementById('searchInput');
+  const themeToggle = document.getElementById('themeToggle');
+
+  // Load JSON
+  fetch('data.json')
+    .then(res => res.json())
+    .then(data => {
+      rawData = data;
+      if (data.length > 0) {
+        headers = Object.keys(data[0]);
+        buildHeaders();
+        renderTable();
+      }
+    })
+    .catch(err => console.error('Failed to load data.json', err));
+
+  function buildHeaders() {
+    theadRow.innerHTML = '';
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header;
+      theadRow.appendChild(th);
+    });
+  }
+
+  function renderTable() {
+    const searchValue = searchInput.value.toLowerCase();
+    const fragment = document.createDocumentFragment();
+
+    rawData.forEach(row => {
+
+      const rowString = Object.values(row)
+        .map(v => v ? String(v).toLowerCase() : '')
+        .join(' ');
+
+      if (searchValue && !rowString.includes(searchValue)) return;
+
+      const tr = document.createElement('tr');
+
+      headers.forEach((header, colIndex) => {
+        const td = document.createElement('td');
+        const cellValue = row[header] ?? '';
+
+        if (colIndex === 0) {
+          td.style.display = 'flex';
+          td.style.alignItems = 'center';
+          td.style.justifyContent = 'space-between';
+
+          const span = document.createElement('span');
+          span.textContent = cellValue;
+          td.appendChild(span);
+
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn';
+          btn.textContent = 'Copy';
+          btn.onclick = () => copyToClipboard(btn, cellValue);
+          td.appendChild(btn);
+        } else {
+          td.textContent = cellValue;
+        }
+
+        tr.appendChild(td);
+      });
+
+      fragment.appendChild(tr);
+    });
+
+    tbody.innerHTML = '';
+    tbody.appendChild(fragment);
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(renderTable, 150);
+  });
+
+  function copyToClipboard(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  }
+
+  themeToggle.addEventListener('change', function() {
+    document.body.classList.toggle('light');
+  });
+
+  window.addEventListener('load', function() {
+    const modal = new bootstrap.Modal(document.getElementById('importantModal'));
+    modal.show();
+  });
+
+})();
+</script>
+
+</body>
+</html>
