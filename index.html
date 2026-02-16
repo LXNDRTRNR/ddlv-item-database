@@ -93,11 +93,17 @@ body{
   border-right:none;
 }
 
-/* Column sizing - Item Code gets minimal space */
+/* Column sizing */
 .data-table th:nth-child(1),
 .data-table td:nth-child(1){
-  width:12%;
+  width:18%;
   white-space:nowrap;
+}
+
+.data-table td:nth-child(1){
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .data-table th:nth-child(2),
@@ -114,7 +120,7 @@ body{
 
 .data-table th:nth-child(4),
 .data-table td:nth-child(4){
-  width:53%;
+  width:47%;
   white-space:nowrap;
   font-size:.75rem;
 }
@@ -143,6 +149,7 @@ body{
   color:#fff;
   border:none;
   cursor:pointer;
+  flex-shrink:0;
 }
 
 .modal-content{
@@ -307,8 +314,6 @@ const cell=row[header];
 const value=cell?.value??'';
 const bg=cell?.background??'';
 
-td.textContent=value;
-
 // Apply color class based on background
 const colorClass=getColorClass(bg);
 if(colorClass){
@@ -321,13 +326,8 @@ td.style.backgroundColor=bg;
 }
 
 if(colIndex===0){
-td.style.display='flex';
-td.style.alignItems='center';
-td.style.justifyContent='space-between';
-
 const span=document.createElement('span');
 span.textContent=value;
-td.textContent='';
 td.appendChild(span);
 
 const btn=document.createElement('button');
@@ -335,6 +335,8 @@ btn.className='copy-btn';
 btn.textContent='Copy';
 btn.onclick=()=>copyToClipboard(btn,value);
 td.appendChild(btn);
+} else {
+td.textContent=value;
 }
 
 tr.appendChild(td);
