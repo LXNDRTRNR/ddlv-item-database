@@ -84,7 +84,6 @@ body{
   padding:8px 10px;
   border-bottom:1px solid var(--border);
   border-right:1px solid var(--border);
-  word-wrap:break-word;
   overflow:hidden;
   text-overflow:ellipsis;
 }
@@ -92,6 +91,32 @@ body{
 .data-table th:last-child,
 .data-table td:last-child{
   border-right:none;
+}
+
+/* Column sizing - Item Code gets minimal space */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1){
+  width:12%;
+  white-space:nowrap;
+}
+
+.data-table th:nth-child(2),
+.data-table td:nth-child(2){
+  width:20%;
+  white-space:nowrap;
+}
+
+.data-table th:nth-child(3),
+.data-table td:nth-child(3){
+  width:15%;
+  white-space:nowrap;
+}
+
+.data-table th:nth-child(4),
+.data-table td:nth-child(4){
+  width:53%;
+  white-space:nowrap;
+  font-size:.75rem;
 }
 
 /* Red background - white text (both modes) */
