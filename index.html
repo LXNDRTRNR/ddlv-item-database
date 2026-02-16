@@ -52,6 +52,77 @@ body{
   gap:10px;
 }
 
+.info-panel{
+  position:fixed;
+  top:20px;
+  left:20px;
+  z-index:999;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  transition:all .3s ease;
+}
+
+.info-panel.expanded{
+  padding:15px;
+  width:280px;
+}
+
+.info-panel.collapsed{
+  padding:0;
+  width:50px;
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.info-toggle{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:transparent;
+  border:none;
+  color:var(--text);
+  cursor:pointer;
+  font-size:1rem;
+  padding:5px;
+  line-height:1;
+}
+
+.info-panel.collapsed .info-toggle{
+  display:none;
+}
+
+.info-content{
+  font-size:.8rem;
+  line-height:1.8;
+}
+
+.info-panel.collapsed .info-content{
+  display:none;
+}
+
+.info-icon{
+  font-size:1.5rem;
+  color:var(--text);
+  display:none;
+}
+
+.info-panel.collapsed .info-icon{
+  display:block;
+}
+
+.info-content a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.info-content a:hover{
+  text-decoration:underline;
+}
+
 .search-input{
   background:var(--bg);
   color:var(--text);
@@ -252,6 +323,21 @@ body.light .btn-close{
 <body>
 <div class="container-fluid">
 
+<!-- Info Panel -->
+<div class="info-panel expanded" id="infoPanel">
+  <button class="info-toggle" id="infoToggle">
+    <i class="fa-solid fa-times"></i>
+  </button>
+  <div class="info-icon" id="infoIcon">
+    <i class="fa-solid fa-info-circle"></i>
+  </div>
+  <div class="info-content">
+    <div><strong>Created by:</strong> <a href="https://www.threads.com/@lxndrtrnr" target="_blank">LXNDRTRNR</a></div>
+    <div><strong>Issues and feedback:</strong> <a href="https://github.com/LXNDRTRNR/ddlv-item-database/issues" target="_blank">GitHub</a></div>
+    <div><strong>Support the creator:</strong> <a href="https://paypal.me/LXNDRTRNR" target="_blank">Tip here</a></div>
+  </div>
+</div>
+
 <div class="top-block">
 <div class="row">
 <div class="col-2"></div>
@@ -323,6 +409,20 @@ const tbody=document.getElementById('tableBody');
 const theadRow=document.getElementById('tableHead');
 const searchInput=document.getElementById('searchInput');
 const themeToggle=document.getElementById('themeToggle');
+const infoPanel=document.getElementById('infoPanel');
+const infoToggle=document.getElementById('infoToggle');
+const infoIcon=document.getElementById('infoIcon');
+
+// Info panel toggle
+infoToggle.addEventListener('click',()=>{
+  infoPanel.classList.remove('expanded');
+  infoPanel.classList.add('collapsed');
+});
+
+infoIcon.addEventListener('click',()=>{
+  infoPanel.classList.remove('collapsed');
+  infoPanel.classList.add('expanded');
+});
 
 fetch('data.json')
 .then(res=>res.json())
