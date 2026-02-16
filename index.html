@@ -94,6 +94,37 @@ body{
   border-right:none;
 }
 
+/* ADD THIS SECTION - Column width controls */
+/* Column 1: Item Code */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1){
+  width:18%; /* Adjust this percentage */
+  white-space:nowrap;
+}
+
+/* Column 2: Item Name */
+.data-table th:nth-child(2),
+.data-table td:nth-child(2){
+  width:20%; /* Adjust this percentage */
+  white-space:nowrap;
+}
+
+/* Column 3: Category */
+.data-table th:nth-child(3),
+.data-table td:nth-child(3){
+  width:15%; /* Adjust this percentage */
+  white-space:nowrap;
+}
+
+/* Column 4: Notes & Warnings */
+.data-table th:nth-child(4),
+.data-table td:nth-child(4){
+  width:47%; /* Adjust this percentage */
+  white-space:nowrap;
+  font-size:.75rem; /* Smaller font to prevent wrapping */
+}
+/* END OF COLUMN WIDTH SECTION */
+
 /* Red background - white text (both modes) */
 .data-table td.bg-red {
   color: #ffffff !important;
@@ -118,6 +149,7 @@ body{
   color:#fff;
   border:none;
   cursor:pointer;
+  flex-shrink:0; /* ADD THIS - prevents button from shrinking */
 }
 
 .modal-content{
