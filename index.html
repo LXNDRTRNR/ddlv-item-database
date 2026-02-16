@@ -94,36 +94,41 @@ body{
   border-right:none;
 }
 
-/* ADD THIS SECTION - Column width controls */
+/* Column width controls */
 /* Column 1: Item Code */
 .data-table th:nth-child(1),
 .data-table td:nth-child(1){
-  width:18%; /* Adjust this percentage */
+  width:12%;
   white-space:nowrap;
+}
+
+.data-table td:nth-child(1){
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
 
 /* Column 2: Item Name */
 .data-table th:nth-child(2),
 .data-table td:nth-child(2){
-  width:20%; /* Adjust this percentage */
+  width:25%;
   white-space:nowrap;
 }
 
 /* Column 3: Category */
 .data-table th:nth-child(3),
 .data-table td:nth-child(3){
-  width:15%; /* Adjust this percentage */
+  width:18%;
   white-space:nowrap;
 }
 
 /* Column 4: Notes & Warnings */
 .data-table th:nth-child(4),
 .data-table td:nth-child(4){
-  width:47%; /* Adjust this percentage */
+  width:45%;
   white-space:nowrap;
-  font-size:.75rem; /* Smaller font to prevent wrapping */
 }
-/* END OF COLUMN WIDTH SECTION */
 
 /* Red background - white text (both modes) */
 .data-table td.bg-red {
@@ -143,13 +148,13 @@ body{
 .copy-btn{
   font-size:.7rem;
   padding:3px 8px;
-  margin-left:8px;
   border-radius:6px;
   background:var(--accent);
   color:#fff;
   border:none;
   cursor:pointer;
-  flex-shrink:0; /* ADD THIS - prevents button from shrinking */
+  flex-shrink:0;
+  white-space:nowrap;
 }
 
 .modal-content{
@@ -314,8 +319,6 @@ const cell=row[header];
 const value=cell?.value??'';
 const bg=cell?.background??'';
 
-td.textContent=value;
-
 // Apply color class based on background
 const colorClass=getColorClass(bg);
 if(colorClass){
@@ -328,13 +331,8 @@ td.style.backgroundColor=bg;
 }
 
 if(colIndex===0){
-td.style.display='flex';
-td.style.alignItems='center';
-td.style.justifyContent='space-between';
-
 const span=document.createElement('span');
 span.textContent=value;
-td.textContent='';
 td.appendChild(span);
 
 const btn=document.createElement('button');
@@ -342,6 +340,8 @@ btn.className='copy-btn';
 btn.textContent='Copy';
 btn.onclick=()=>copyToClipboard(btn,value);
 td.appendChild(btn);
+} else {
+td.textContent=value;
 }
 
 tr.appendChild(td);
