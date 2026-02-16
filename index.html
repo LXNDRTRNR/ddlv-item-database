@@ -199,7 +199,6 @@
   const searchInput = document.getElementById('searchInput');
   const themeToggle = document.getElementById('themeToggle');
 
-  // Load JSON
   fetch('data.json')
     .then(res => res.json())
     .then(data => {
@@ -227,9 +226,9 @@
 
     rawData.forEach(row => {
 
-      const rowString = Object.values(row)
-        .map(v => v ? String(v).toLowerCase() : '')
-        .join(' ');
+      const rowString = headers.map(h => {
+        return row[h]?.value ? String(row[h].value).toLowerCase() : '';
+      }).join(' ');
 
       if (searchValue && !rowString.includes(searchValue)) return;
 
@@ -237,8 +236,19 @@
 
       headers.forEach((header, colIndex) => {
         const td = document.createElement('td');
-        const cellValue = row[header] ?? '';
 
+        const cell = row[header];
+        const cellValue = cell?.value ?? '';
+        const bgColor = cell?.background ?? '';
+
+        td.textContent = cellValue;
+
+        // Apply background colour directly
+        if (bgColor && bgColor !== '#ffffff') {
+          td.style.backgroundColor = bgColor;
+        }
+
+        // Copy button for first column
         if (colIndex === 0) {
           td.style.display = 'flex';
           td.style.alignItems = 'center';
@@ -246,6 +256,7 @@
 
           const span = document.createElement('span');
           span.textContent = cellValue;
+          td.textContent = '';
           td.appendChild(span);
 
           const btn = document.createElement('button');
@@ -253,8 +264,6 @@
           btn.textContent = 'Copy';
           btn.onclick = () => copyToClipboard(btn, cellValue);
           td.appendChild(btn);
-        } else {
-          td.textContent = cellValue;
         }
 
         tr.appendChild(td);
@@ -283,13 +292,9 @@
     document.body.classList.toggle('light');
   });
 
-  window.addEventListener('load', function() {
-    const modal = new bootstrap.Modal(document.getElementById('importantModal'));
-    modal.show();
-  });
-
 })();
 </script>
+
 
 </body>
 </html>
