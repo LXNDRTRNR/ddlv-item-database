@@ -114,7 +114,8 @@ input:checked + .slider:before{
   margin-top:15px;
   border:1px solid var(--border);
   border-radius:12px;
-  overflow:hidden;
+  overflow:auto;
+  max-height:calc(100vh - 150px);
 }
 
 .data-table{
@@ -124,10 +125,22 @@ input:checked + .slider:before{
 }
 
 .data-table thead{
+  position:sticky;
+  top:0;
+  z-index:10;
   background:var(--border);
 }
 
-.data-table th,
+.data-table th{
+  padding:8px 10px;
+  border-bottom:1px solid var(--border);
+  border-right:1px solid var(--border);
+  word-wrap:break-word;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  background:var(--border);
+}
+
 .data-table td{
   padding:8px 10px;
   border-bottom:1px solid var(--border);
