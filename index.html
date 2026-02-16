@@ -96,23 +96,29 @@ body{
 
 /* Column width controls */
 /* Column 1: Item Code */
-.data-table th:nth-child(1),
-.data-table td:nth-child(1){
-  width:12%;
+.data-table th:nth-child(1){
+  width:16%;
   white-space:nowrap;
 }
 
 .data-table td:nth-child(1){
+  width:16%;
+  white-space:nowrap;
+  padding:0;
+}
+
+.item-code-cell{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px;
+  padding:8px 10px;
+  height:100%;
 }
 
 /* Column 2: Item Name */
 .data-table th:nth-child(2),
 .data-table td:nth-child(2){
-  width:25%;
+  width:24%;
   white-space:nowrap;
 }
 
@@ -126,7 +132,7 @@ body{
 /* Column 4: Notes & Warnings */
 .data-table th:nth-child(4),
 .data-table td:nth-child(4){
-  width:45%;
+  width:42%;
   white-space:nowrap;
 }
 
@@ -148,6 +154,7 @@ body{
 .copy-btn{
   font-size:.7rem;
   padding:3px 8px;
+  margin-left:8px;
   border-radius:6px;
   background:var(--accent);
   color:#fff;
@@ -331,15 +338,20 @@ td.style.backgroundColor=bg;
 }
 
 if(colIndex===0){
+const wrapper=document.createElement('div');
+wrapper.className='item-code-cell';
+
 const span=document.createElement('span');
 span.textContent=value;
-td.appendChild(span);
+wrapper.appendChild(span);
 
 const btn=document.createElement('button');
 btn.className='copy-btn';
 btn.textContent='Copy';
 btn.onclick=()=>copyToClipboard(btn,value);
-td.appendChild(btn);
+wrapper.appendChild(btn);
+
+td.appendChild(wrapper);
 } else {
 td.textContent=value;
 }
